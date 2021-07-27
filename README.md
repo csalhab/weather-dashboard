@@ -1,6 +1,24 @@
 # 06 Server-Side APIs: Weather Dashboard
 
-## Your Task
+## Application Information
+
+This repo is homework6 which like homework5 also covers Third-Party API's but here it is all about retrieving data from another application's API and using it in this app's context. This browser app is a weather dashboard and it features dynamically updated HTML and CSS.
+
+
+## Deployed Application
+
+[>>>>> Click here to see the Eeployed Weather Dashboard browser application <<<<<](https://csalhab.github.io/weather-dashboard/)
+
+## Table of Contents on Homework5
+
+- [Task](#task)
+- [User Story](#user-story)
+- [Acceptance Criteria](#acceptance-criteria)
+- [Mock Up](#mock-up)
+- [Grading Requirements](#grading-requirements)
+- [Review](#review)
+
+## Task
 
 Third-party APIs allow developers to access their data and functionality by making requests with specific parameters to a URL. Developers are often tasked with retrieving data from another application's API and using it in the context of their own. Your challenge is to build a weather dashboard that will run in the browser and feature dynamically updated HTML and CSS.
 
@@ -34,7 +52,7 @@ THEN I am again presented with current and future conditions for that city
 
 The following image shows the web application's appearance and functionality:
 
-![The weather app includes a search option, a list of cities, and a five-day forecast and current weather conditions for Atlanta.](./Assets/06-server-side-apis-homework-demo.png)
+![The weather app includes a search option, a list of cities, and a five-day forecast and current weather conditions for Atlanta.](./assets/images/06-server-side-apis-homework-demo.png)
 
 ## Grading Requirements
 

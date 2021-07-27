@@ -4,9 +4,69 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l" crossorigin="anonymous">
+    <title>Weather Dashboard</title>
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <link rel="stylesheet" type="text/css" href="./assets/css/reset.css" />
+    <link rel="stylesheet" type="text/css" href="./assets/css/style.css" />
 </head>
 <body>
-    
+    <main class="mainContainer">
+        <header>
+            <h1>Weather Dashboard</h1>
+        </header>
+        <div class="container">
+            <div class="row">
+                <aside class="col-md-4">
+                    <div>"search for a city" text..</div>
+                    <div>city input field here..</div>
+                    <div>search button here</div>
+                    <hr>
+                    <ol id="selectable">
+                        <li class="ui-widget-content">Item 1</li>
+                        <li class="ui-widget-content">Item 2</li>
+                        <li class="ui-widget-content">Item 3</li>
+                        <li class="ui-widget-content">Item 4</li>
+                        <li class="ui-widget-content">Item 5</li>
+                        <li class="ui-widget-content">Item 6</li>
+                        <li class="ui-widget-content">Item 7</li>
+                      </ol>
+                </aside> 
+                <div class="col-md-8">
+                    <summary>
+                        <div class="cityWeatherContainer">
+                            city weather info here..
+                        </div>
+                    </summary>
+                    <section>
+                        <h2>
+                            5-Day Forecast:
+                        </h2>
+                        <div class="5dayforecastContainer">
+                            <div class="dayXForecast">TodayInfo</div>
+                            <div class="dayX+1Forecast">TomorrowInfo</div>
+                            <div class="dayX+2Forecast">+2DaysInfo</div>
+                            <div class="dayX+3Forecast">+3DaysInfo</div>
+                            <div class="dayX+4Forecast">+4DaysInfo</div>
+                        </div>
+                    </section>
+                </div>
+            </div>
+        </div>
+    </main>
+    <style>
+        #feedback { font-size: 1.4em; }
+        #selectable .ui-selecting { background: #FECA40; }
+        #selectable .ui-selected { background: #F39814; color: white; }
+        #selectable { list-style-type: none; margin: 0; padding: 0; width: 60%; }
+        #selectable li { margin: 3px; padding: 0.4em; font-size: 1.4em; height: 18px; }
+        </style>
+        <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+        <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+        <script>
+        $( function() {
+          $( "#selectable" ).selectable();
+        } );
+        </script>
 </body>
 </html>
