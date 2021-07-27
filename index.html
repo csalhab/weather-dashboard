@@ -12,17 +12,21 @@
 </head>
 <body>
     <main class="mainContainer">
-        <header>
+        <header class="p-3 mb-2 gradient-custom text-white">
             <h1>Weather Dashboard</h1>
         </header>
-        <div class="container">
+        <div class="container asideContainer">
             <div class="row">
                 <aside class="col-md-4">
-                    <div>"search for a city" text..</div>
-                    <div>city input field here..</div>
-                    <div>search button here</div>
+                    <div class="searchForCity">Search for a City:</div>
+                    <!-- <div><input type="text" id="city" name="city"></div> -->
+                    <input type="text" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-lg" id="cityInput">
+                    <div class="d-grid gap-2">
+                        <button type="button" class="btn btn-info col-12 searchButton">Search</button>
+                    </div>
                     <hr>
-                    <ol id="selectable">
+                    <div class="olContainer vh-100">
+                    <!-- <ol id="selectable">
                         <li class="ui-widget-content">Item 1</li>
                         <li class="ui-widget-content">Item 2</li>
                         <li class="ui-widget-content">Item 3</li>
@@ -30,19 +34,20 @@
                         <li class="ui-widget-content">Item 5</li>
                         <li class="ui-widget-content">Item 6</li>
                         <li class="ui-widget-content">Item 7</li>
-                      </ol>
+                      </ol> -->
+                    </div>
                 </aside> 
                 <div class="col-md-8">
                     <summary>
                         <div class="cityWeatherContainer">
-                            city weather info here..
+                            <!-- city weather info here.. -->
                         </div>
                     </summary>
                     <section>
                         <h2>
                             5-Day Forecast:
                         </h2>
-                        <div class="5dayforecastContainer">
+                        <div class="fivedayforecastContainer">
                             <div class="dayXForecast">TodayInfo</div>
                             <div class="dayX+1Forecast">TomorrowInfo</div>
                             <div class="dayX+2Forecast">+2DaysInfo</div>
@@ -60,9 +65,13 @@
         #selectable .ui-selected { background: #F39814; color: white; }
         #selectable { list-style-type: none; margin: 0; padding: 0; width: 60%; }
         #selectable li { margin: 3px; padding: 0.4em; font-size: 1.4em; height: 18px; }
-        </style>
+    </style>
+
         <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
         <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
+        <script src="./assets/js/script.js"></script>
+
         <script>
         $( function() {
           $( "#selectable" ).selectable();
