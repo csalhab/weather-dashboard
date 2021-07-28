@@ -48,3 +48,7 @@ h2 {
 .olContainer {
     height: max-content;
 }
+
+.col-md-8 {
+    visibility: hidden;
+}
