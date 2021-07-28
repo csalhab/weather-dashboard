@@ -52,3 +52,14 @@ h2 {
 .col-md-8 {
     visibility: hidden;
 }
+
+.cityDateIconContainer {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.weatherInfoContainer {
+    display: flex;
+    flex-direction: column;
+}

@@ -13,6 +13,8 @@ var now = moment();
 
 var comboWords = "";
 
+var weatherIcon;
+
 //gets current hour from momentjs now variable
 //returns in military 24 hr time
 var hour = now.hour();
@@ -40,47 +42,75 @@ function searchCity(userCityInput) {
             olContainerEl.append(olEl);
             olCreated = true;
         }
+        //lists of cities on the left side
         console.log("creating li now");
         var liEl = $("<li>");
         liEl.attr("class", "ui-widget-content");
         liEl.text(properCapitalization);
         olEl.append(liEl);
 
-        var cityDateTitle = $(".cityWeatherContainer");
-        cityDateTitle.text(properCapitalization + " " + now.format("L"));
+        var cityDateIcon = $(".cityDateIconContainer");
+        cityDateIcon.text(properCapitalization + " (" + now.format("L") + ")");
+        
         var weatherTop = $(".col-md-8");
         weatherTop.css("visibility", "visible");
 
-
-        var baseUrl = "http://api.openweathermap.org/data/2.5/weather";
+        var baseURL = "http://api.openweathermap.org/data/2.5/weather";
         var addCity = "q=";
         var addAPIKey = "appid=aa772c06902f60c4e5f5e833c0ce31f4";
         //https://openweathermap.org/current#data
         //For temperature in Fahrenheit use units=imperial
         var units = "units=imperial";
         //http://api.openweathermap.org/data/2.5/weather?q=Miami&appid=aa772c06902f60c4e5f5e833c0ce31f4
-        var constructedUrl = baseUrl + "?" + addCity + userCityInput + "&" + units + "&" + addAPIKey;
+        var constructedWeatherUrl = baseURL + "?" + addCity + userCityInput + "&" + units + "&" + addAPIKey;
 
-        fetch(constructedUrl, {
+        fetch(constructedWeatherUrl, {
         method: "GET", //GET is the default.
         credentials: "same-origin", // include, *same-origin, omit
         redirect: "follow", // manual, *follow, error
         })
         .then(function (response) {
-            return response.json();
+            if (response.status === 200) {
+                return response.json();
+            } else {
+                alert("Oops!! Open Weather Map is not available at this time.")
+            }
         })
         .then(function (data) {
             console.log(data);
-            console.log(data.weather[0].description);
-            // citySearchResults = data;
-            // console.log(citySearchResults.length);
-            // for (var i=0; i<citySearchResults.length; i++) {
-            //     console.log(citySearchResults[i]);
-            // }
-            handleWeatherIcon();
-        })
-        .catch( function( err ) { 
-            // Error 
+            //console.log(data.weather[0].description);
+            weatherIcon = data.weather[0].icon;
+            //console.log("icon: " + weatherIcon);
+
+            //https://openweathermap.org/img/wn/04n.png
+            //icon value returned goes at end before .png
+            var iconURL = "https://openweathermap.org/img/wn/" + weatherIcon + ".png";
+            var weatherIconEl = $("<img>");
+            weatherIconEl.attr("src", iconURL);
+            weatherIconEl.attr("width", "50px");
+            weatherIconEl.attr("height", "50px");
+            cityDateIcon.append(weatherIconEl);
+
+            var weatherInfoContainerEl = $(".weatherInfoContainer");
+            var tempF = data.main.temp;
+            var tempFEl = $("<p>");
+            tempFEl.text("Temp: " + tempF + "°F");
+            weatherInfoContainerEl.append(tempFEl);
+
+            var wind = data.wind.speed;
+            var windEl = $("<p>");
+            windEl.text("Wind: " + tempF + " MPH");
+            weatherInfoContainerEl.append(windEl);
+
+            var humidity = data.main.humidity;
+            var humidityEl = $("<p>");
+            humidityEl.text("Humidity: " + humidity + " %");
+            weatherInfoContainerEl.append(humidityEl);
+
+            //uvindex not included as it is deprecated in current API
+            //they have One API but requires Longitude/Latitude API fyi
+
+            do5DayForecast(userCityInput);
         });
     }
 }
@@ -103,9 +133,60 @@ function handleLetterCasing(origCityCasing) {
     }
 }
 
-function handleWeatherIcon() {
-    //https://openweathermap.org/img/wn/04n@2x.png
-    //icon value returned goes before @
+function do5DayForecast(userCity) {
+    var baseURL = "http://api.openweathermap.org/data/2.5/forecast";
+    var addCity = "q=";
+    //https://openweathermap.org/current#data
+    //For temperature in Fahrenheit use units=imperial
+    var units = "units=imperial";
+    var addAPIKey = "appid=aa772c06902f60c4e5f5e833c0ce31f4";
+    //Example URL http://api.openweathermap.org/data/2.5/forecast?q=Miami&units=imperial&appid=aa772c06902f60c4e5f5e833c0ce31f4
+    var constructedForecastUrl = baseURL + "?" + addCity + userCity + "&" + units + "&" + addAPIKey;
+
+    fetch(constructedForecastUrl, {
+    method: "GET", //GET is the default.
+    credentials: "same-origin", // include, *same-origin, omit
+    redirect: "follow", // manual, *follow, error
+    })
+    .then(function (response) {
+        if (response.status === 200) {
+            return response.json();
+        } else {
+            alert("Oops!! Open Weather Map Forecast is not available at this time.")
+        }
+    })
+    .then(function (data) {
+        console.log("forecast time..");
+        console.log(data);
+        //console.log(data.weather[0].description);
+
+        //https://openweathermap.org/img/wn/04n.png
+        //icon value returned goes at end before .png
+        // var iconURL = "https://openweathermap.org/img/wn/" + weatherIcon + ".png";
+        // var weatherIconEl = $("<img>");
+        // weatherIconEl.attr("src", iconURL);
+        // weatherIconEl.attr("width", "50px");
+        // weatherIconEl.attr("height", "50px");
+        // cityDateIcon.append(weatherIconEl);
+
+        // var weatherInfoContainerEl = $(".weatherInfoContainer");
+        // var tempF = data.main.temp;
+        // var tempFEl = $("<p>");
+        // tempFEl.text("Temp: " + tempF + "°F");
+        // weatherInfoContainerEl.append(tempFEl);
+
+        // var wind = data.wind.speed;
+        // var windEl = $("<p>");
+        // windEl.text("Wind: " + tempF + " MPH");
+        // weatherInfoContainerEl.append(windEl);
+
+        // var humidity = data.main.humidity;
+        // var humidityEl = $("<p>");
+        // humidityEl.text("Humidity: " + humidity + " %");
+        // weatherInfoContainerEl.append(humidityEl);
+
+    });
+
 }
 
 //USER INTERACTIONS ============================================================
