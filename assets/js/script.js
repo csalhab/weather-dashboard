@@ -1,6 +1,8 @@
 //DEPENDENCIES =================================================================
 var searchCityBtn = $(".searchButton");
 
+var weatherInfoContainerEl = $(".weatherInfoContainer");
+
 var olCreated = false;
 var olEl = $("<ol>");
 
@@ -37,15 +39,15 @@ function searchCity(userCityInput) {
     } else {
         if(!olCreated) {
             console.log("first one created");
-            olEl.attr("id", "selectable");
-            var olContainerEl = $(".olContainer");
+            //olEl.attr("id", "selectable");
+            var olContainerEl = $(".vh-100");
             olContainerEl.append(olEl);
             olCreated = true;
         }
         //lists of cities on the left side
         console.log("creating li now");
         var liEl = $("<li>");
-        liEl.attr("class", "ui-widget-content");
+        liEl.attr("class", "cityOnLeft");
         liEl.text(properCapitalization);
         olEl.append(liEl);
 
@@ -70,11 +72,11 @@ function searchCity(userCityInput) {
         redirect: "follow", // manual, *follow, error
         })
         .then(function (response) {
-            if (response.status === 200) {
+            //if (response.status === 200) {
                 return response.json();
-            } else {
-                alert("Oops!! Open Weather Map is not available at this time.")
-            }
+            //} else {
+                //alert("Oops!! Open Weather Map is not available at this time.")
+            //}
         })
         .then(function (data) {
             console.log(data);
@@ -91,7 +93,7 @@ function searchCity(userCityInput) {
             weatherIconEl.attr("height", "50px");
             cityDateIcon.append(weatherIconEl);
 
-            var weatherInfoContainerEl = $(".weatherInfoContainer");
+            //var weatherInfoContainerEl = $(".weatherInfoContainer");
             var tempF = data.main.temp;
             var tempFEl = $("<p>");
             tempFEl.text("Temp: " + tempF + "°F");
@@ -111,6 +113,10 @@ function searchCity(userCityInput) {
             //they have One API but requires Longitude/Latitude API fyi
 
             do5DayForecast(userCityInput);
+        })
+        .catch(function (err) {
+            alert("Please make sure you entered a valid city name.");
+
         });
     }
 }
@@ -119,7 +125,7 @@ function handleLetterCasing(origCityCasing) {
     
     words = origCityCasing.split(" ");
     //this handles capitalizing multiple words city name
-    if (words.length > 2) {
+    if (words.length > 1) {
         for (var i = 0; i < words.length; i++) {
             words[i] = words[i][0].toUpperCase() + words[i].substr(1);
             comboWords = comboWords + " " + words[i];
@@ -158,7 +164,30 @@ function do5DayForecast(userCity) {
     .then(function (data) {
         console.log("forecast time..");
         console.log(data);
-        //console.log(data.weather[0].description);
+        //next day; +1day
+        console.log(data.list[6].dt_txt);
+        console.log(data.list[6].main.temp);
+        console.log(data.list[6].wind.speed);
+        console.log(data.list[6].main.humidity);
+        //+2days
+        console.log(data.list[14].dt_txt);
+        //+3days
+        console.log(data.list[22].dt_txt);
+        //+4days
+        console.log(data.list[30].dt_txt);
+        //+5days
+        console.log(data.list[38].dt_txt);
+
+        //console.log("momentjs date, tomorrow: " + now.add(1, 'day').endOf('day').format("L"));
+        //console.log("momentjs date, +2days: " + now.add(2, 'day').endOf('day').format("L"));
+        //console.log("momentjs date, +3days: " + now.add(3, 'day').endOf('day').format("L"));
+        //console.log("momentjs date, +4days: " + now.add(4, 'day').endOf('day').format("L"));
+        //console.log("momentjs date, +5days: " + now.add(5, 'day').endOf('day').format("L"));
+        var tomorrow = now.add(1, 'day').endOf('day').format("L");
+        var twoDaysFromNow = now.add(1, 'day').endOf('day').format("L");
+        var threeDaysFromNow = now.add(1, 'day').endOf('day').format("L");
+        console.log("tomorrow: " + tomorrow + " twoDaysFromNow: " + twoDaysFromNow + " threeDaysFromNow: " + threeDaysFromNow)
+
 
         //https://openweathermap.org/img/wn/04n.png
         //icon value returned goes at end before .png
@@ -196,6 +225,9 @@ function do5DayForecast(userCity) {
 searchCityBtn.on("click", function (event) {
     event.preventDefault();
     console.log("clicked");
+    comboWords = "";
+    weatherInfoContainerEl.empty();
+    
     //console.log("save button " + event.target.id + " clicked");
     //console.log(event.currentTarget.parentNode.children[0].childNodes[0].textContent);
     var cityInput = $("#cityInput").val();
