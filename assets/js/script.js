@@ -57,7 +57,7 @@ function searchCity(userCityInput) {
         var weatherTop = $(".col-md-8");
         weatherTop.css("visibility", "visible");
 
-        var baseURL = "http://api.openweathermap.org/data/2.5/weather";
+        var baseURL = "https://api.openweathermap.org/data/2.5/weather";
         var addCity = "q=";
         var addAPIKey = "appid=aa772c06902f60c4e5f5e833c0ce31f4";
         //https://openweathermap.org/current#data
@@ -140,7 +140,7 @@ function handleLetterCasing(origCityCasing) {
 }
 
 function do5DayForecast(userCity) {
-    var baseURL = "http://api.openweathermap.org/data/2.5/forecast";
+    var baseURL = "https://api.openweathermap.org/data/2.5/forecast";
     var addCity = "q=";
     //https://openweathermap.org/current#data
     //For temperature in Fahrenheit use units=imperial
