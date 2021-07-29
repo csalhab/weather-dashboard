@@ -165,19 +165,17 @@ function do5DayForecast(userCity) {
     .then(function (data) {
         console.log("forecast time..");
         console.log(data);
-
-        var tomorrow = now.add(1, 'day').endOf('day').format("L");
-        var twoDaysFromNow = now.add(1, 'day').endOf('day').format("L");
-        var threeDaysFromNow = now.add(1, 'day').endOf('day').format("L");
-        var fourDaysFromNow = now.add(1, 'day').endOf('day').format("L");
-        var fiveDaysFromNow = now.add(1, 'day').endOf('day').format("L");
+        // var tomorrow = now.add(1, 'day').endOf('day').format("L");
+        // var twoDaysFromNow = now.add(1, 'day').endOf('day').format("L");
+        // var threeDaysFromNow = now.add(1, 'day').endOf('day').format("L");
+        // var fourDaysFromNow = now.add(1, 'day').endOf('day').format("L");
+        // var fiveDaysFromNow = now.add(1, 'day').endOf('day').format("L");
         //console.log("tomorrow: " + tomorrow + " twoDaysFromNow: " + twoDaysFromNow + " threeDaysFromNow: " + threeDaysFromNow);
         //console.log("fourDaysFromNow: " + fourDaysFromNow + " fiveDaysFromNow: " + fiveDaysFromNow);
         //ugh OWM 5day forecast returns every 3 hours per day based on current time, lots of items
         //so pulling just the 12noon timestamp item and its temp, wind & humidity
         //ex: 2021-07-30 03:00:00, 2021-07-30 06:00:00, 2021-07-30 09:00:00 
         //ex of 12noon timestamp: 2021-07-30 12:00:00, starts on 11th index so extract it starting there
-        var forecastMidday;
         //console.log("midday items: ");
         for(var i = 0; i < data.list.length; i++){
             //console.log(data.list[i].dt_txt);
@@ -188,42 +186,50 @@ function do5DayForecast(userCity) {
             var forecastHumidity = data.list[i].main.humidity;
             var forecastIcon = data.list[i].weather[0].icon;
             //if 12noon is found, extract temp, wind & humidity
-            if (forecastMidday = (date.indexOf("12:00:00") > -1)) {
-                console.log("date: " + date);
-                console.log("forecastTemp: " + forecastTemp);
-                console.log("forecastWind: " + forecastWind);
-                console.log("forecastHumidity: " + forecastHumidity);
-                console.log("forecastIcon: " + forecastIcon);
+            if (forecast12Noon = (date.indexOf("12:00:00") > -1)) {
+                // console.log("date: " + date);
+                // console.log("forecastTemp: " + forecastTemp);
+                // console.log("forecastWind: " + forecastWind);
+                // console.log("forecastHumidity: " + forecastHumidity);
+                // console.log("forecastIcon: " + forecastIcon);
+                showForecastWeatherInfo(now.add(1, 'day').endOf('day').format("L"), forecastTemp, forecastWind, forecastHumidity, forecastIcon);
             }
         }
+    });
+
+}
+
+function showForecastWeatherInfo(forecastDay, forecastTempF, forecastWindMPH, forecastHumidityPerc, forecastIconNum) {
+
+        var forecastContainer = $(".fivedayforecastContainer");
+
+        var forecastDay1 = $(".forecastDay1");
+        forecastDay1.text(forecastDay);
 
         //https://openweathermap.org/img/wn/04n.png
         //icon value returned goes at end before .png
-        // var iconURL = "https://openweathermap.org/img/wn/" + weatherIcon + ".png";
-        // var weatherIconEl = $("<img>");
-        // weatherIconEl.attr("src", iconURL);
-        // weatherIconEl.attr("width", "50px");
-        // weatherIconEl.attr("height", "50px");
-        // cityDateIcon.append(weatherIconEl);
+        var iconURL = "https://openweathermap.org/img/wn/" + forecastIconNum + ".png";
+        var forecastIconEl = $("<img>");
+        forecastIconEl.attr("src", iconURL);
+        forecastIconEl.attr("width", "50px");
+        forecastIconEl.attr("height", "50px");
 
-        // var weatherInfoContainerEl = $(".weatherInfoContainer");
-        // var tempF = data.main.temp;
-        // var tempFEl = $("<p>");
-        // tempFEl.text("Temp: " + tempF + "°F");
-        // weatherInfoContainerEl.append(tempFEl);
+        forecastDay1.append(forecastIconEl);
 
-        // var wind = data.wind.speed;
-        // var windEl = $("<p>");
-        // windEl.text("Wind: " + tempF + " MPH");
-        // weatherInfoContainerEl.append(windEl);
+        var forecastInfoContainerEl = $(".forecastInfoContainer");
+        var forecastTempFEl = $("<p>");
+        forecastTempFEl.text("Temp: " + forecastTempF + "°F");
+        forecastDay1.append(forecastTempFEl);
 
-        // var humidity = data.main.humidity;
-        // var humidityEl = $("<p>");
-        // humidityEl.text("Humidity: " + humidity + " %");
-        // weatherInfoContainerEl.append(humidityEl);
+        var forecastWindEl = $("<p>");
+        forecastWindEl.text("Wind: " + forecastWindMPH + " MPH");
+        forecastDay1.append(forecastWindEl);
 
-    });
+        var forecastHumidityEl = $("<p>");
+        forecastHumidityEl.text("Humidity: " + forecastHumidityPerc + " %");
+        forecastDay1.append(forecastHumidityEl);
 
+        forecastContainer.append(forecastDay1);
 }
 
 //USER INTERACTIONS ============================================================
