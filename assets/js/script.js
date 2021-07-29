@@ -7,7 +7,6 @@ var olCreated = false;
 var olEl = $("<ol>");
 
 var citySearchResults;
-var obj;
 var cityEntries;
 
 //[BUILD] call moment:
@@ -16,6 +15,8 @@ var now = moment();
 var comboWords = "";
 
 var weatherIcon;
+
+
 
 //gets current hour from momentjs now variable
 //returns in military 24 hr time
@@ -67,9 +68,9 @@ function searchCity(userCityInput) {
         var constructedWeatherUrl = baseURL + "?" + addCity + userCityInput + "&" + units + "&" + addAPIKey;
 
         fetch(constructedWeatherUrl, {
-        method: "GET", //GET is the default.
-        credentials: "same-origin", // include, *same-origin, omit
-        redirect: "follow", // manual, *follow, error
+            method: "GET", //GET is the default.
+            credentials: "same-origin", // include, *same-origin, omit
+            redirect: "follow", // manual, *follow, error
         })
         .then(function (response) {
             //if (response.status === 200) {
@@ -164,30 +165,37 @@ function do5DayForecast(userCity) {
     .then(function (data) {
         console.log("forecast time..");
         console.log(data);
-        //next day; +1day
-        console.log(data.list[6].dt_txt);
-        console.log(data.list[6].main.temp);
-        console.log(data.list[6].wind.speed);
-        console.log(data.list[6].main.humidity);
-        //+2days
-        console.log(data.list[14].dt_txt);
-        //+3days
-        console.log(data.list[22].dt_txt);
-        //+4days
-        console.log(data.list[30].dt_txt);
-        //+5days
-        console.log(data.list[38].dt_txt);
 
-        //console.log("momentjs date, tomorrow: " + now.add(1, 'day').endOf('day').format("L"));
-        //console.log("momentjs date, +2days: " + now.add(2, 'day').endOf('day').format("L"));
-        //console.log("momentjs date, +3days: " + now.add(3, 'day').endOf('day').format("L"));
-        //console.log("momentjs date, +4days: " + now.add(4, 'day').endOf('day').format("L"));
-        //console.log("momentjs date, +5days: " + now.add(5, 'day').endOf('day').format("L"));
         var tomorrow = now.add(1, 'day').endOf('day').format("L");
         var twoDaysFromNow = now.add(1, 'day').endOf('day').format("L");
         var threeDaysFromNow = now.add(1, 'day').endOf('day').format("L");
-        console.log("tomorrow: " + tomorrow + " twoDaysFromNow: " + twoDaysFromNow + " threeDaysFromNow: " + threeDaysFromNow)
-
+        var fourDaysFromNow = now.add(1, 'day').endOf('day').format("L");
+        var fiveDaysFromNow = now.add(1, 'day').endOf('day').format("L");
+        //console.log("tomorrow: " + tomorrow + " twoDaysFromNow: " + twoDaysFromNow + " threeDaysFromNow: " + threeDaysFromNow);
+        //console.log("fourDaysFromNow: " + fourDaysFromNow + " fiveDaysFromNow: " + fiveDaysFromNow);
+        //ugh OWM 5day forecast returns every 3 hours per day based on current time, lots of items
+        //so pulling just the 12noon timestamp item and its temp, wind & humidity
+        //ex: 2021-07-30 03:00:00, 2021-07-30 06:00:00, 2021-07-30 09:00:00 
+        //ex of 12noon timestamp: 2021-07-30 12:00:00, starts on 11th index so extract it starting there
+        var forecastMidday;
+        //console.log("midday items: ");
+        for(var i = 0; i < data.list.length; i++){
+            //console.log(data.list[i].dt_txt);
+            var date = data.list[i].dt_txt.substring(11);
+            //console.log(data.list[i].dt_txt.substring(11));
+            var forecastTemp = data.list[i].main.temp;
+            var forecastWind = data.list[i].wind.speed;
+            var forecastHumidity = data.list[i].main.humidity;
+            var forecastIcon = data.list[i].weather[0].icon;
+            //if 12noon is found, extract temp, wind & humidity
+            if (forecastMidday = (date.indexOf("12:00:00") > -1)) {
+                console.log("date: " + date);
+                console.log("forecastTemp: " + forecastTemp);
+                console.log("forecastWind: " + forecastWind);
+                console.log("forecastHumidity: " + forecastHumidity);
+                console.log("forecastIcon: " + forecastIcon);
+            }
+        }
 
         //https://openweathermap.org/img/wn/04n.png
         //icon value returned goes at end before .png
@@ -235,6 +243,9 @@ searchCityBtn.on("click", function (event) {
     searchCity(cityInput);
 });
 
+
+//store cityEntries in local storage
+//
 //retrieve cityEntries from local storage
 //var lastCityEntries = JSON.parse(localStorage.getItem("cityEntries"));
 //if (lastCityEntries !== null) {
