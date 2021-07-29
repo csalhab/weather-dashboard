@@ -165,6 +165,7 @@ function do5DayForecast(userCity) {
     .then(function (data) {
         console.log("forecast time..");
         console.log(data);
+        var day = 1;
         // var tomorrow = now.add(1, 'day').endOf('day').format("L");
         // var twoDaysFromNow = now.add(1, 'day').endOf('day').format("L");
         // var threeDaysFromNow = now.add(1, 'day').endOf('day').format("L");
@@ -186,25 +187,26 @@ function do5DayForecast(userCity) {
             var forecastHumidity = data.list[i].main.humidity;
             var forecastIcon = data.list[i].weather[0].icon;
             //if 12noon is found, extract temp, wind & humidity
-            if (forecast12Noon = (date.indexOf("12:00:00") > -1)) {
+            if (date.indexOf("12:00:00") > -1) {
                 // console.log("date: " + date);
                 // console.log("forecastTemp: " + forecastTemp);
                 // console.log("forecastWind: " + forecastWind);
                 // console.log("forecastHumidity: " + forecastHumidity);
                 // console.log("forecastIcon: " + forecastIcon);
-                showForecastWeatherInfo(now.add(1, 'day').endOf('day').format("L"), forecastTemp, forecastWind, forecastHumidity, forecastIcon);
+                showForecastWeatherInfo(day, now.add(1, 'day').endOf('day').format("L"), forecastTemp, forecastWind, forecastHumidity, forecastIcon);
+                day++;
             }
         }
     });
 
 }
 
-function showForecastWeatherInfo(forecastDay, forecastTempF, forecastWindMPH, forecastHumidityPerc, forecastIconNum) {
+function showForecastWeatherInfo(forecastDay, forecastDate, forecastTempF, forecastWindMPH, forecastHumidityPerc, forecastIconNum) {
 
         var forecastContainer = $(".fivedayforecastContainer");
 
-        var forecastDay1 = $(".forecastDay1");
-        forecastDay1.text(forecastDay);
+        var forecastDay1 = $(".forecastDay" + forecastDay);
+        forecastDay1.text(forecastDate);
 
         //https://openweathermap.org/img/wn/04n.png
         //icon value returned goes at end before .png
