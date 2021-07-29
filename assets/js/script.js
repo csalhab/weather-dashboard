@@ -232,6 +232,11 @@ function showForecastWeatherInfo(forecastDay, forecastDate, forecastTempF, forec
         forecastDay1.append(forecastHumidityEl);
 
         forecastContainer.append(forecastDay1);
+        //fix reset current day for next searches
+        if (forecastDay === 5) {
+            //console.log("5day hit!");
+            now = moment();
+        };
 }
 
 //USER INTERACTIONS ============================================================
