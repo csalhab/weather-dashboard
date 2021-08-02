@@ -117,6 +117,7 @@ function searchCity(userCityInput) {
             console.log("cityEntries objects properCapitalization: " + wind);
             console.log("cityEntries objects properCapitalization: " + humidity);
             console.log("cityEntries objects properCapitalization: " + iconURL);
+            console.log(cityEntries);
             
             //add objects to array/build for local storage
             cityEntries.push({cityName: properCapitalization, date: storedDate, temperature: tempF, windSpeed: wind, humidityPercentage: humidity, weatherImage: iconURL});
@@ -269,6 +270,7 @@ function handleCities() {
     //if key does exist, render city weather else create array that'll get objects added to it when a search is conducted
     if (lastcityEntries !== null) {
         olCreated = true;
+        cityEntries = lastcityEntries;
         renderCities();
     } else {
         olCreated = false;
@@ -288,6 +290,7 @@ function handleForecast() {
     //if key does exist, render forecast else create array that'll get objects added to it when a search is conducted
     if (lastforecastCityEntries !== null) {
         olCreated = true;
+        forecastEntries = lastforecastCityEntries;
         renderForecast();
     } else {
         olCreated = false;
