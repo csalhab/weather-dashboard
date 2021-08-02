@@ -3,11 +3,12 @@ var searchCityBtn = $(".searchButton");
 
 var weatherInfoContainerEl = $(".weatherInfoContainer");
 
-var olCreated = false;
+var olCreated;
 var olEl = $("<ol>");
 
-var citySearchResults;
+var properCapitalization;
 var cityEntries;
+var forecastEntries;
 
 //[BUILD] call moment:
 var now = moment();
@@ -21,9 +22,8 @@ var weatherIcon;
 //gets current hour from momentjs now variable
 //returns in military 24 hr time
 var hour = now.hour();
-console.log("moment date: " + now.format("L"));
-//console.log(hour);
-//convert/format to standard time 
+
+//convert/format to standard time if needed
 //var standardHour = moment(hour, "H").format("h");
 
 //DATA =========================================================================
@@ -32,7 +32,7 @@ console.log("moment date: " + now.format("L"));
 
 function searchCity(userCityInput) {
 
-    var properCapitalization = handleLetterCasing(userCityInput);
+    properCapitalization = handleLetterCasing(userCityInput);
     console.log("proper? " + properCapitalization);
 
     if (!userCityInput) {
@@ -55,7 +55,7 @@ function searchCity(userCityInput) {
         var cityDateIcon = $(".cityDateIconContainer");
         cityDateIcon.text(properCapitalization + " (" + now.format("L") + ")");
         
-        var weatherTop = $(".col-md-8");
+        var weatherTop = $(".col-md-10");
         weatherTop.css("visibility", "visible");
 
         var baseURL = "https://api.openweathermap.org/data/2.5/weather";
@@ -65,25 +65,19 @@ function searchCity(userCityInput) {
         //For temperature in Fahrenheit use units=imperial
         var units = "units=imperial";
         //http://api.openweathermap.org/data/2.5/weather?q=Miami&appid=aa772c06902f60c4e5f5e833c0ce31f4
-        var constructedWeatherUrl = baseURL + "?" + addCity + userCityInput + "&" + units + "&" + addAPIKey;
+        var constructedWeatherURL = baseURL + "?" + addCity + userCityInput + "&" + units + "&" + addAPIKey;
 
-        fetch(constructedWeatherUrl, {
+        fetch(constructedWeatherURL, {
             method: "GET", //GET is the default.
             credentials: "same-origin", // include, *same-origin, omit
             redirect: "follow", // manual, *follow, error
         })
         .then(function (response) {
-            //if (response.status === 200) {
-                return response.json();
-            //} else {
-                //alert("Oops!! Open Weather Map is not available at this time.")
-            //}
+            return response.json();
         })
         .then(function (data) {
             console.log(data);
-            //console.log(data.weather[0].description);
             weatherIcon = data.weather[0].icon;
-            //console.log("icon: " + weatherIcon);
 
             //https://openweathermap.org/img/wn/04n.png
             //icon value returned goes at end before .png
@@ -113,6 +107,29 @@ function searchCity(userCityInput) {
             //uvindex not included as it is deprecated in current API
             //they have One API but requires Longitude/Latitude API fyi
 
+            //simplified now into a variable to store
+            var storedDate = "(" + now.format("L") + ")";
+
+            console.log("pushing cityEntries..");
+            console.log("cityEntries objects properCapitalization: " + properCapitalization);
+            console.log("cityEntries objects properCapitalization: " + storedDate);
+            console.log("cityEntries objects properCapitalization: " + tempF);
+            console.log("cityEntries objects properCapitalization: " + wind);
+            console.log("cityEntries objects properCapitalization: " + humidity);
+            console.log("cityEntries objects properCapitalization: " + iconURL);
+            
+            //add objects to array/build for local storage
+            cityEntries.push({cityName: properCapitalization, date: storedDate, temperature: tempF, windSpeed: wind, humidityPercentage: humidity, weatherImage: iconURL});
+
+
+            console.log("cityEntries push completed..");
+
+            //save in localstorage
+            localStorage.setItem("cityEntries", JSON.stringify(cityEntries));
+
+
+            console.log("cityEntries setItem completed..");
+
             do5DayForecast(userCityInput);
         })
         .catch(function (err) {
@@ -141,6 +158,9 @@ function handleLetterCasing(origCityCasing) {
 }
 
 function do5DayForecast(userCity) {
+
+    console.log("inside do5DayForecast..")
+    
     var baseURL = "https://api.openweathermap.org/data/2.5/forecast";
     var addCity = "q=";
     //https://openweathermap.org/current#data
@@ -148,9 +168,9 @@ function do5DayForecast(userCity) {
     var units = "units=imperial";
     var addAPIKey = "appid=aa772c06902f60c4e5f5e833c0ce31f4";
     //Example URL http://api.openweathermap.org/data/2.5/forecast?q=Miami&units=imperial&appid=aa772c06902f60c4e5f5e833c0ce31f4
-    var constructedForecastUrl = baseURL + "?" + addCity + userCity + "&" + units + "&" + addAPIKey;
+    var constructedForecastURL = baseURL + "?" + addCity + userCity + "&" + units + "&" + addAPIKey;
 
-    fetch(constructedForecastUrl, {
+    fetch(constructedForecastURL, {
     method: "GET", //GET is the default.
     credentials: "same-origin", // include, *same-origin, omit
     redirect: "follow", // manual, *follow, error
@@ -166,34 +186,29 @@ function do5DayForecast(userCity) {
         console.log("forecast time..");
         console.log(data);
         var day = 1;
-        // var tomorrow = now.add(1, 'day').endOf('day').format("L");
-        // var twoDaysFromNow = now.add(1, 'day').endOf('day').format("L");
-        // var threeDaysFromNow = now.add(1, 'day').endOf('day').format("L");
-        // var fourDaysFromNow = now.add(1, 'day').endOf('day').format("L");
-        // var fiveDaysFromNow = now.add(1, 'day').endOf('day').format("L");
-        //console.log("tomorrow: " + tomorrow + " twoDaysFromNow: " + twoDaysFromNow + " threeDaysFromNow: " + threeDaysFromNow);
-        //console.log("fourDaysFromNow: " + fourDaysFromNow + " fiveDaysFromNow: " + fiveDaysFromNow);
         //ugh OWM 5day forecast returns every 3 hours per day based on current time, lots of items
-        //so pulling just the 12noon timestamp item and its temp, wind & humidity
+        //so pulling just the 3pm timestamp item and its temp, wind & humidity
         //ex: 2021-07-30 03:00:00, 2021-07-30 06:00:00, 2021-07-30 09:00:00 
-        //ex of 12noon timestamp: 2021-07-30 12:00:00, starts on 11th index so extract it starting there
-        //console.log("midday items: ");
+        //ex of 12noon timestamp: 2021-07-30 12:00:00
+        //1st time number starts on 11th index so extract it starting there
+        //console.log("3pm items: ");
         for(var i = 0; i < data.list.length; i++){
-            //console.log(data.list[i].dt_txt);
             var date = data.list[i].dt_txt.substring(11);
-            //console.log(data.list[i].dt_txt.substring(11));
             var forecastTemp = data.list[i].main.temp;
             var forecastWind = data.list[i].wind.speed;
             var forecastHumidity = data.list[i].main.humidity;
             var forecastIcon = data.list[i].weather[0].icon;
-            //if 12noon is found, extract temp, wind & humidity
-            if (date.indexOf("12:00:00") > -1) {
-                // console.log("date: " + date);
-                // console.log("forecastTemp: " + forecastTemp);
-                // console.log("forecastWind: " + forecastWind);
-                // console.log("forecastHumidity: " + forecastHumidity);
-                // console.log("forecastIcon: " + forecastIcon);
-                showForecastWeatherInfo(day, now.add(1, 'day').endOf('day').format("L"), forecastTemp, forecastWind, forecastHumidity, forecastIcon);
+            //if 3pm is found, extract temp, wind & humidity
+            if (date.indexOf("03:00:00") > -1) {
+
+                var forecastMomentDay = now.add(1, 'day').endOf('day').format("L");
+                showForecastWeatherInfo(day, forecastMomentDay, forecastTemp, forecastWind, forecastHumidity, forecastIcon);
+                
+                //add objects to array/build for local storage
+                forecastEntries.push({forecastCityName: properCapitalization, forecastDate: forecastMomentDay, forecastTemperature: forecastTemp, forecastWindSpeed: forecastWind, forecastHumidityPercentage: forecastHumidity, forecastWeatherImage: forecastIcon});
+
+                //save in localstorage
+                localStorage.setItem("forecastEntries", JSON.stringify(forecastEntries));
                 day++;
             }
         }
@@ -203,40 +218,88 @@ function do5DayForecast(userCity) {
 
 function showForecastWeatherInfo(forecastDay, forecastDate, forecastTempF, forecastWindMPH, forecastHumidityPerc, forecastIconNum) {
 
-        var forecastContainer = $(".fivedayforecastContainer");
-
-        var forecastDay1 = $(".forecastDay" + forecastDay);
-        forecastDay1.text(forecastDate);
+        var forecastDayHolder = $(".forecastDay" + forecastDay);
+        forecastDayHolder.text(forecastDate);
 
         //https://openweathermap.org/img/wn/04n.png
         //icon value returned goes at end before .png
-        var iconURL = "https://openweathermap.org/img/wn/" + forecastIconNum + ".png";
+        var OWMiconURL = "https://openweathermap.org/img/wn/" + forecastIconNum + ".png";
         var forecastIconEl = $("<img>");
-        forecastIconEl.attr("src", iconURL);
+        forecastIconEl.attr("class", "card-text");
+        forecastIconEl.attr("src", OWMiconURL);
         forecastIconEl.attr("width", "50px");
         forecastIconEl.attr("height", "50px");
 
-        forecastDay1.append(forecastIconEl);
+        forecastDayHolder.append(forecastIconEl);
 
         var forecastInfoContainerEl = $(".forecastInfoContainer");
         var forecastTempFEl = $("<p>");
+        forecastTempFEl.attr("class", "card-text");
         forecastTempFEl.text("Temp: " + forecastTempF + "°F");
-        forecastDay1.append(forecastTempFEl);
+        forecastDayHolder.append(forecastTempFEl);
 
         var forecastWindEl = $("<p>");
+        forecastTempFEl.attr("class", "card-text");
         forecastWindEl.text("Wind: " + forecastWindMPH + " MPH");
-        forecastDay1.append(forecastWindEl);
+        forecastDayHolder.append(forecastWindEl);
 
         var forecastHumidityEl = $("<p>");
+        forecastTempFEl.attr("class", "card-text");
         forecastHumidityEl.text("Humidity: " + forecastHumidityPerc + " %");
-        forecastDay1.append(forecastHumidityEl);
+        forecastDayHolder.append(forecastHumidityEl);
 
-        forecastContainer.append(forecastDay1);
         //fix reset current day for next searches
         if (forecastDay === 5) {
-            //console.log("5day hit!");
             now = moment();
         };
+}
+
+function renderCities() {
+    console.log("cities already saved");
+}
+
+function renderForecast() {
+    console.log("forecast already saved");
+}
+
+function handleCities() {
+
+    //retrieve key from local storage to see if it already exists 1st
+    var lastcityEntries = JSON.parse(localStorage.getItem("cityEntries"));
+    //if key does exist, render city weather else create array that'll get objects added to it when a search is conducted
+    if (lastcityEntries !== null) {
+        olCreated = true;
+        renderCities();
+    } else {
+        olCreated = false;
+        cityEntries = [];
+        console.log("created cityEntries[] now");
+    }
+
+    handleForecast();
+
+
+}
+
+function handleForecast() {
+
+    //retrieve key from local storage to see if it already exists 1st
+    var lastforecastCityEntries = JSON.parse(localStorage.getItem("forecastEntries"));
+    //if key does exist, render forecast else create array that'll get objects added to it when a search is conducted
+    if (lastforecastCityEntries !== null) {
+        olCreated = true;
+        renderForecast();
+    } else {
+        olCreated = false;
+        forecastEntries = [];
+        console.log("created forecastEntries[] now");
+    }
+
+}
+
+function init() {
+    console.log("init called!")
+    handleCities();
 }
 
 //USER INTERACTIONS ============================================================
@@ -245,7 +308,6 @@ function showForecastWeatherInfo(forecastDay, forecastDate, forecastTempF, forec
 
 searchCityBtn.on("click", function (event) {
     event.preventDefault();
-    console.log("clicked");
     comboWords = "";
     weatherInfoContainerEl.empty();
     
@@ -257,11 +319,4 @@ searchCityBtn.on("click", function (event) {
 });
 
 
-//store cityEntries in local storage
-//
-//retrieve cityEntries from local storage
-//var lastCityEntries = JSON.parse(localStorage.getItem("cityEntries"));
-//if (lastCityEntries !== null) {
-//
-//   lastCityEntries = [];
-//}
+init();
