@@ -92,6 +92,10 @@ h2 {
     margin-bottom: 20px;
 }
 
+.leftSideCities {
+    height: 100%;
+}
+
 p {
     width: max-content;
 }
