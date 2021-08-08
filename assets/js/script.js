@@ -72,6 +72,7 @@ async function callOWM(cityInputForOWM) {
   }).then(function (response) {
     return response.json();
   });
+  console.log(data);
   if (data.cod === "404") {
     console.log("badSearchTerm 404 & handled");
     alert("Please make sure you entered a valid city name.");
@@ -140,7 +141,9 @@ function extractAndShowWeatherInfo(OWMdata, city) {
   humidityEl.text("Humidity: " + OWMdata.main.humidity + " %");
   weatherInfoContainerEl.append(humidityEl);
 
-  weatherTop.css("visibility", "visible");
+  callOWMOneUVIndex(OWMdata.coord.lat, OWMdata.coord.lon);
+
+  // weatherTop.css("visibility", "visible");
 }
 
 async function callOWMForecast(cityInputForOWMForecast) {
@@ -227,6 +230,64 @@ function extractAndShowForecast(OWMForecastData) {
       now = moment();
     }
   }
+}
+
+async function callOWMOneUVIndex(lat, lon) {
+  var baseURL = "https://api.openweathermap.org/data/2.5/onecall";
+  var lattidue = "lat=" + lat;
+  var longitude = "lon=" + lon;
+  var exclude = "exclude=minutely,hourly,daily";
+  //https://openweathermap.org/current#data
+  //For temperature in Fahrenheit use units=imperial
+  var units = "units=imperial";
+  var addAPIKey = "appid=aa772c06902f60c4e5f5e833c0ce31f4";
+  //Example OWP ONE API URL (for UVIndex)
+  //https://api.openweathermap.org/data/2.5/onecall?lat={lat}&lon={lon}&exclude={part}&appid={API key}
+  //https://api.openweathermap.org/data/2.5/onecall?lat={lat}&lon={lon}&exclude=minutely,hourly,daily&appid=aa772c06902f60c4e5f5e833c0ce31f4
+
+  var constructedONEURL =
+    baseURL +
+    "?" +
+    lattidue +
+    "&" +
+    longitude +
+    "&" +
+    exclude +
+    "&" +
+    units +
+    "&" +
+    addAPIKey;
+
+  var data = await fetch(constructedONEURL, {
+    method: "GET", //GET is the default.
+    credentials: "same-origin", // include, *same-origin, omit
+    redirect: "follow", // manual, *follow, error
+  }).then(function (response) {
+    return response.json();
+  });
+
+  showONEUVIndexValue(data);
+}
+
+function showONEUVIndexValue(OWMONE) {
+  console.log("UVIndex");
+  console.log(OWMONE);
+  var UVIndex = OWMONE.current.uvi;
+
+  var uvIndexContainer = $("<div>");
+  uvIndexContainer.attr("class", "uvIndexContainer");
+  var uvIndexTextEl = $("<p>");
+  uvIndexTextEl.attr("class", "uvIndexText");
+  var uvIndexBtnEl = $("<p>");
+  uvIndexBtnEl.attr("class", "uvIndexBtn");
+  uvIndexTextEl.text("UV Index:   ");
+  uvIndexBtnEl.text(UVIndex);
+  uvIndexBtnEl.attr("style", "background-color: #228B22;");
+  uvIndexContainer.append(uvIndexTextEl);
+  uvIndexContainer.append(uvIndexBtnEl);
+  weatherInfoContainerEl.append(uvIndexContainer);
+
+  weatherTop.css("visibility", "visible");
 }
 
 function init() {
