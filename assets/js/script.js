@@ -103,7 +103,7 @@ function showCity(cityInputShow) {
 
   //lists of cities on the left side
   var cityBtnEl = $("<button>");
-  cityBtnEl.attr("class", "citySearchedOnLeft btn btn-secondary");
+  cityBtnEl.attr("class", "citySearchedOnLeft btn btn-secondary col-12");
   cityBtnEl.attr("data-city", cityInputShow);
   cityBtnEl.text(cityInputShow);
   citiesSearchOnLeftDivEl.append(cityBtnEl);
@@ -240,8 +240,7 @@ function init() {
 
 // Delegate event listener to the parent element, <div class="vh-100">
 olContainerEl.on("click", ".citySearchedOnLeft", function (event) {
-  console.log("you clicked me the city");
-  console.log($(event.target).attr("data-city"));
+  //console.log($(event.target).attr("data-city"));
   isDynamicButton = true;
   callOWM($(event.target).attr("data-city"));
 });
@@ -252,8 +251,6 @@ searchCityBtn.on("click", function (event) {
   isDynamicButton = false;
   comboWords = "";
 
-  //console.log("save button " + event.target.id + " clicked");
-  //console.log(event.currentTarget.parentNode.children[0].childNodes[0].textContent);
   var cityInput = $("#cityInput").val();
 
   if (!cityInput) {
